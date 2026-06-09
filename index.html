@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sayuri & Rafael - Nosso Amor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Inter',sans-serif;
+  background: linear-gradient(135deg,#f8f3f1 0%,#fff8f6 100%);
+  color:#222;
+  min-height:100vh;
+}
+
+/* Confetti */
+#confetti-container{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:999999;
+}
+
+.confetti{
+  position:absolute;
+  top:-20px;
+  width:10px;
+  height:10px;
+  pointer-events:none;
+  opacity:1;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  from{
+    transform:translateY(0) rotate(0deg);
+    opacity:1;
+  }
+  to{
+    transform:translateY(calc(100vh + 40px)) rotate(720deg);
+    opacity:0;
+  }
+}
+
+/* Welcome */
+#welcome-screen {
+  position:fixed; inset:0; background:white; z-index:9999;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  transition:.8s;
+}
+.welcome-heart { font-size:90px; cursor:pointer; animation:heartbeat 1.4s infinite; }
+.welcome-text { margin-top:18px; font-size:24px; font-family:'Playfair Display',serif; color:#dc6478; }
+@keyframes heartbeat { 0%,100%{transform:scale(1);} 25%{transform:scale(1.08);} 50%{transform:scale(1);} }
+
+/* Container */
+.container {
+  max-width:520px; margin:auto; padding:28px 22px 80px;
+  opacity:0; transform:translateY(20px); transition:1s;
+}
+.container.visible { opacity:1; transform:none; }
+
+/* Hero */
+.hero { text-align:center; margin-top:20px; }
+.photo { border-radius:30px; overflow:hidden; box-shadow:0 20px 60px rgba(220,100,120,.18); border:1px solid rgba(255,255,255,.6); margin-bottom:28px; }
+.photo img { width:100%; display:block; }
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px; font-weight: 700;
+  background: linear-gradient(135deg, #dc6478 0%, #e8839a 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* Cards */
+.card {
+  background:rgba(255,255,255,.72); backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.6);
+  padding:26px; border-radius:28px; margin-top:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.05);
+}
+.title { font-size:12px; letter-spacing:3px; text-transform:uppercase; font-weight:700; opacity:.45; margin-bottom:14px; }
+.message { 
+  font-size:28px; line-height:1.35; 
+  font-family:'Playfair Display',serif; 
+  color:#2d2d2d; 
+}
+.counter { 
+  font-size:34px; font-weight:700; 
+  background:linear-gradient(135deg,#dc6478,#ea8da0); 
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; 
+  margin-bottom:10px; 
+}
+
+/* Música + Ondas */
+.music-player { display:flex; align-items:center; gap:16px; }
+.music-cover {
+  width:68px; height:68px; border-radius:18px;
+  background: url('capa-musica.png') center/cover;
+  box-shadow:0 10px 25px rgba(220,100,120,.3);
+}
+.wave {
+  display:flex;
+  align-items:flex-end;
+  gap:5px;
+  height:32px;
+  margin-top:8px;
+}
+.bar {
+  width:5px;
+  height:8px;
+  background:#dc6478;
+  border-radius:999px;
+  animation:none;
+}
+.playing .bar {
+  animation: soundwave 1.05s infinite ease-in-out;
+}
+.playing .bar:nth-child(1){animation-delay:0s;}
+.playing .bar:nth-child(2){animation-delay:0.15s;}
+.playing .bar:nth-child(3){animation-delay:0.3s;}
+.playing .bar:nth-child(4){animation-delay:0.45s;}
+.playing .bar:nth-child(5){animation-delay:0.6s;}
+@keyframes soundwave {
+  0%, 100% { height: 8px; }
+  50% { height: 31px; }
+}
+
+/* Botões */
+button {
+  width:100%; padding:18px; border:none; border-radius:18px;
+  background:linear-gradient(135deg,#dc6478,#ea8da0); color:white;
+  font-weight:700; cursor:pointer; margin-top:18px; transition:.3s;
+}
+button:active { transform:scale(0.95); }
+
+.surprise-btn {
+  animation: surprisePulse 2s infinite;
+}
+@keyframes surprisePulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.06); } }
+
+/* Botões Sociais */
+.social-btn {
+  width:54px; height:54px; border-radius:50%; background:white;
+  display:flex; align-items:center; justify-content:center;
+  text-decoration:none; color:#dc6478; font-size:24px;
+  box-shadow:0 8px 22px rgba(0,0,0,.08);
+  transition: all .3s ease;
+}
+.social-btn:hover {
+  transform: translateY(-4px) scale(1.12);
+  box-shadow:0 12px 30px rgba(220,100,120,.3);
+  color:#c23d5e;
+}
+
+/* Modal */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.85);
+  display:flex; justify-content:center; align-items:center; z-index:99999; padding:20px;
+}
+.modal-content {
+  background:white; padding:25px; border-radius:28px; 
+  max-width:460px; width:100%; text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div id="confetti-container"></div>
+
+
+<div id="welcome-screen" onclick="startExperience()">
+  <div class="welcome-heart">❤️</div>
+  <div class="welcome-text">Clique para abrir</div>
+</div>
+
+<audio id="bg-music" loop>
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container" id="main-content">
+  <div class="hero">
+    <div class="photo"><img src="foto-casal.jpeg" alt="Sayuri e Rafael"></div>
+    <h1>Sayuri e Rafael</h1>
+    <div style="font-family:'Playfair Display',serif; font-size:22px; color:#dc6478; text-align:center;">
+      Nosso amor é a melhor parte da minha vida
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="title">Mensagem de hoje</div>
+    <div class="message" id="dailyMessage">Carregando...</div>
+  </div>
+
+  <div class="card">
+    <div class="title">Nosso tempo junto</div>
+    <div class="counter" id="counter">...</div>
+    <div class="small">Desde 29/09/2012</div>
+  </div>
+
+  <!-- MÚSICA -->
+  <div class="card">
+    <div class="title">Nossa música</div>
+    <div class="music-player playing" id="music-player">
+      <div class="music-cover"></div>
+      <div style="flex:1">
+        <div style="font-weight:700;">Ainda Bem</div>
+        <div style="color:#777; font-size:14px;">Thiaguinho</div>
+        <div class="wave">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+    </div>
+    <button id="music-btn" onclick="toggleMusic()">⏸️ Pausar Música</button>
+  </div>
+
+  <div class="card">
+    <div class="title">Surpresa</div>
+    <button id="surpriseBtn" class="surprise-btn" onclick="triggerSurprise()">Clique para descobrir ✨</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer" style="margin-top:50px; text-align:center; padding-bottom:30px;">
+    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:20px;">
+      <a href="https://instagram.com/kusaipresentes" target="_blank" class="social-btn">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://wa.me/5521983034801" target="_blank" class="social-btn">
+        <i class="fab fa-whatsapp"></i>
+      </a>
+    </div>
+    <div style="font-size:13px; color:#888;">criado com ❤️ por Kusai Presentes</div>
+  </div>
+</div>
+
+<script>
+// ==================== CONFIGURAÇÕES ====================
+const startDate = new Date(2012, 8, 29);
+
+const specialMessages = {
+  "12-06": "Não importa o que aconteça, você é sempre o meu pensamento favorito. Te amo!",
+  "29-09": "Passando para dizer que o meu dia fica muito melhor só de lembrar de você. Te amo, Sayuri!",
+  "27-11": "Sayuri, você é o motivo do meu sorriso hoje. Tenha um dia maravilhoso!"
+
+};
+
+const dailyMessages = [
+  "Você ainda é meu lugar favorito.", "Seu abraço continua sendo minha paz.",
+  "Com você, tudo faz sentido.", "Obrigado por existir na minha vida.",
+  "Eu escolheria você de novo.", "Nosso amor mora nos detalhes.",
+  "Você faz o mundo parecer mais leve.", "Até nos dias difíceis, ainda é você.",
+  "Mesmo quando você não está por perto, meu dia continua cheio de você.",
+  "Você é a melhor parte da minha rotina.", "Só de saber que vou te ver mais tarde, meu coração já sorri.",
+  "Não existe distância quando alguém mora nos nossos pensamentos.",
+  "Você transforma qualquer dia comum em um dia especial.",
+  "Meu lugar favorito continua sendo ao seu lado.",
+  "Mesmo nas horas em que estamos longe, sinto você perto de mim.",
+  "Seu abraço ainda é o lugar onde eu encontro paz.",
+  "Você faz parte de todos dos meus melhores momentos, até dos mais simples.",
+  "O meu dia sempre fica melhor quando lembro que tenho você.",
+  "Você está presente até nos pequenos detalhes da minha vida.",
+  "Não importa quanto tempo passe até a gente se encontrar de novo, você continua sendo o meu pensamento favorito.",
+  "Ter você na minha vida faz qualquer espera valer a pena.",
+  "A melhor lembrança do meu dia quase sempre envolve você.",
+  "Às vezes eu paro e sorrio, só porque lembrei de nós.",
+  "Você é aquela parte boa do dia que nunca perde a graça.",
+  "O amor que sinto por você aparece nas coisas mais simples.",
+  "Você consegue fazer meu coração se sentir em casa, mesmo quando não está aqui.",
+  "Se existe um lugar onde eu sempre quero voltar, esse lugar é você.",
+  "Quando você ler isso, só quero que saiba: amar você continua sendo a coisa mais bonita que acontece nos meus dias.",
+  "Você é o motivo do meu sorriso bobo sem motivo aparente.",
+  "Cada mensagem sua ilumina meu dia inteiro.",
+  "Meu coração escolheu você e não quer mais saber de outra pessoa.",
+  "Com você, até o silêncio é confortável e bonito.",
+  "Você é minha pessoa favorita no mundo inteiro.",
+  "Te amar se tornou minha atividade preferida do dia.",
+  "Você torna os dias bons ainda melhores e os difíceis mais leves.",
+  "Meu futuro sempre teve seu nome desde o dia que te conheci.",
+  "Você é o tipo de amor que eu leria várias vezes.",
+  "Sinto que meu coração bate mais bonito quando penso em você.",
+  "Você é o pedacinho de céu que eu carrego comigo todos os dias.",
+  "Amar você é fácil, difícil é imaginar a vida sem você.",
+  "Você chegou e mudou completamente o significado de 'felicidade'.",
+  "Todo dia eu me apaixono um pouquinho mais por você.",
+  "Você é meu refúgio, minha paz e minha maior aventura.",
+  "Não preciso de nada mais, só de você do meu lado.",
+  "Seu sorriso ainda é minha cena favorita.",
+  "Você é o motivo pelo qual eu acredito no amor.",
+  "Meu coração encontrou em você seu lugar preferido no mundo.",
+  "Cada segundo ao seu lado vale por mil dias comuns.",
+  "Você é a melhor decisão que eu já tomei na vida.",
+  "Te ter na minha vida é o maior presente que eu poderia receber.",
+  "Você faz com que o amor pareça simples e verdadeiro.",
+  "Meu dia só fica completo quando falo com você.",
+  "Você é a calmaria que eu precisava no meio da correria.",
+  "Amar você é como voltar pra casa todos os dias.",
+  "Você é minha história favorita para contar e recontar.",
+  "Com você, o amor não é só um sentimento, é um lar.",
+  "Você me ensinou o que é amar de verdade.",
+  "Meu coração sorri toda vez que seu nome aparece.",
+  "Você é e sempre será minha pessoa.",
+  "Gratidão é pouco para tudo que sinto por ter você na minha vida."
+];
+  
+let surprisesPool = [];
+let currentSurprises = [];
+
+function resetSurprises() {
+  surprisesPool = [
+    { type: "image", content: "foto-surpresa.jpeg", title: "Uma foto especial pra você 📸" },
+    { type: "video", content: "video-surpresa.mp4", title: "Nossos momentos 🎥" },
+    { type: "text", content: "Só de saber que vou te ver mais tarde, meu coração já sorri." },
+    { type: "text", content: "Você transforma qualquer dia comum em um dia especial." },
+    { type: "text", content: "Meu lugar favorito continua sendo ao seu lado." },
+    { type: "text", content: "Seu abraço ainda é o lugar onde eu encontro paz." },
+    { type: "text", content: "Você faz parte de todos os meus melhores momentos, até dos mais simples." },
+    { type: "text", content: "Ter você na minha vida faz qualquer espera valer a pena." },
+    { type: "text", content: "Você consegue fazer meu coração se sentir em casa, mesmo quando não está aqui." },
+    { type: "text", content: "Se existe um lugar onde eu sempre quero voltar, esse lugar é você." },
+    { type: "text", content: "Quando você ler isso, só quero que saiba: amar você continua sendo a coisa mais bonita que acontece nos meus dias." }
+  ];
+  shuffleArray(surprisesPool);
+  currentSurprises = [...surprisesPool];
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// ==================== FUNÇÕES ====================
+function startExperience(){
+  document.getElementById('bg-music').play().catch(()=>{});
+  document.getElementById('welcome-screen').style.opacity = '0';
+  setTimeout(() => document.getElementById('welcome-screen').style.visibility='hidden', 800);
+  document.getElementById('main-content').classList.add('visible');
+  loadDailyMessage(); updateCounter();
+  resetSurprises();
+}
+
+function toggleMusic(){
+  const music = document.getElementById('bg-music');
+  const btn = document.getElementById('music-btn');
+  const player = document.getElementById('music-player');
+
+  if(music.paused){
+    music.play();
+    btn.innerHTML = '⏸️ Pausar Música';
+    player.classList.add('playing');
+  } else {
+    music.pause();
+    btn.innerHTML = '▶️ Tocar Música';
+    player.classList.remove('playing');
+  }
+}
+
+function loadDailyMessage(){
+  const now = new Date();
+  const key = `${now.getMonth()+1}`.padStart(2,'0') + '-' + `${now.getDate()}`.padStart(2,'0');
+  document.getElementById('dailyMessage').innerText = specialMessages[key] || dailyMessages[Math.floor(Math.random()*dailyMessages.length)];
+}
+
+function updateCounter(){
+  const now = new Date();
+  let years = now.getFullYear() - startDate.getFullYear();
+  let months = now.getMonth() - startDate.getMonth();
+  let days = now.getDate() - startDate.getDate();
+  if(days < 0){ months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+  if(months < 0){ years--; months += 12; }
+  document.getElementById('counter').innerText = `${years} anos, ${months} meses e ${days} dias`;
+}
+
+function triggerSurprise(){
+
+  if(currentSurprises.length === 0){
+    resetSurprises();
+  }
+
+  const item = currentSurprises.pop();
+
+  showModal(item);
+
+  setTimeout(() => {
+    createConfetti();
+  }, 100);
+}
+
+function createConfetti(){
+
+  const container = document.getElementById("confetti-container");
+
+  const colors = [
+    "#dc6478",
+    "#ea8da0",
+    "#ffd1dc",
+    "#ff9eb8",
+    "#ffffff",
+    "#c23d5e"
+  ];
+
+  for(let i = 0; i < 120; i++){
+
+    const el = document.createElement("div");
+    el.className = "confetti";
+
+    const size = Math.random() * 10 + 6;
+
+    el.style.left = Math.random() * 100 + "%";
+    el.style.width = size + "px";
+    el.style.height = size + "px";
+
+    el.style.background =
+      colors[Math.floor(Math.random() * colors.length)];
+
+    el.style.borderRadius =
+      Math.random() > 0.5 ? "50%" : "2px";
+
+    el.style.animationDuration =
+      (Math.random() * 2 + 3) + "s";
+
+    container.appendChild(el);
+
+    setTimeout(() => {
+      el.remove();
+    }, 5500);
+  }
+}
+
+function showModal(item){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  const content = document.createElement('div');
+  content.className = 'modal-content';
+  
+  let html = '';
+
+  if(item.type === 'text'){
+    html = `<p style="font-size:24px; line-height:1.6; padding:25px 15px; color:#3f2a1e; font-family:'Playfair Display',serif;">
+              ${item.content}
+            </p>`;
+  } else if(item.type === 'image'){
+    content.style.padding = '8px';
+    content.style.maxWidth = '500px';
+    html = `<img src="${item.content}" style="width:100%; max-height:82vh; object-fit:contain; border-radius:12px;">`;
+  } else if(item.type === 'video'){
+    const bgMusic = document.getElementById('bg-music');
+    const btn = document.getElementById('music-btn');
+    const player = document.getElementById('music-player');
+    if (bgMusic && !bgMusic.paused) {
+      bgMusic.pause();
+      if (btn) btn.innerHTML = '▶️ Tocar Música';
+      if (player) player.classList.remove('playing');
+    }
+    html = `<h3>${item.title}</h3><video autoplay controls playsinline style="width:100%; max-height:58vh; border-radius:12px; background:#000;"><source src="${item.content}" type="video/mp4"></video>`;
+  }
+
+  content.innerHTML = html;
+
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Fechar ❤️';
+  closeBtn.onclick = () => overlay.remove();
+  content.appendChild(closeBtn);
+
+  overlay.appendChild(content);
+  document.body.appendChild(overlay);
+}
+</script>
+</body>
+</html>
