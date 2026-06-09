@@ -362,10 +362,75 @@ function toggleMusic(){
   }
 }
 
-function loadDailyMessage(){
+function loadDailyMessage() {
+
   const now = new Date();
-  const key = `${now.getMonth()+1}`.padStart(2,'0') + '-' + `${now.getDate()}`.padStart(2,'0');
-  document.getElementById('dailyMessage').innerText = specialMessages[key] || dailyMessages[Math.floor(Math.random()*dailyMessages.length)];
+
+  const dateKey =
+    now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0");
+
+  const specialKey =
+    String(now.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(now.getDate()).padStart(2, "0");
+
+  // Verifica mensagem especial
+  if (specialMessages[specialKey]) {
+    document.getElementById("dailyMessage").innerText =
+      specialMessages[specialKey];
+    return;
+  }
+
+  const savedDate = localStorage.getItem("dailyMessageDate");
+  const savedMessage = localStorage.getItem("dailyMessageText");
+
+  // Se já existe mensagem para hoje, reutiliza
+  if (savedDate === dateKey && savedMessage) {
+    document.getElementById("dailyMessage").innerText = savedMessage;
+    return;
+  }
+
+  // Carrega histórico de mensagens usadas
+  let usedMessages =
+    JSON.parse(localStorage.getItem("usedDailyMessages")) || [];
+
+  // Se todas foram usadas, reinicia
+  if (usedMessages.length >= dailyMessages.length) {
+    usedMessages = [];
+  }
+
+  // Mensagens ainda disponíveis
+  const availableMessages =
+    dailyMessages.filter(msg => !usedMessages.includes(msg));
+
+  // Sorteia uma das disponíveis
+  const selectedMessage =
+    availableMessages[
+      Math.floor(Math.random() * availableMessages.length)
+    ];
+
+  // Salva
+  usedMessages.push(selectedMessage);
+
+  localStorage.setItem(
+    "usedDailyMessages",
+    JSON.stringify(usedMessages)
+  );
+
+  localStorage.setItem(
+    "dailyMessageDate",
+    dateKey
+  );
+
+  localStorage.setItem(
+    "dailyMessageText",
+    selectedMessage
+  );
+
+  document.getElementById("dailyMessage").innerText =
+    selectedMessage;
 }
 
 function updateCounter(){
