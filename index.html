@@ -314,6 +314,7 @@ let currentSurprises = [];
 function resetSurprises() {
   surprisesPool = [
     { type: "image", content: "foto-surpresa.jpeg", title: "Uma foto especial pra você 📸" },
+    { type: "audio", content: "audio.ogg", title: "Uma mensagem especial pra você." },
     { type: "video", content: "video-surpresa.mp4", title: "Nossos momentos 🎥" },
     { type: "text", content: "Só de saber que vou te ver mais tarde, meu coração já sorri." },
     { type: "text", content: "Você transforma qualquer dia comum em um dia especial." },
@@ -325,7 +326,7 @@ function resetSurprises() {
     { type: "text", content: "Se existe um lugar onde eu sempre quero voltar, esse lugar é você." },
     { type: "text", content: "Quando você ler isso, só quero que saiba: amar você continua sendo a coisa mais bonita que acontece nos meus dias." }
   ];
-  shuffleArray(surprisesPool);
+  shuffleArray(surprisesPool);0
   currentSurprises = [...surprisesPool];
 }
 
@@ -515,7 +516,32 @@ function showModal(item){
     content.style.padding = '8px';
     content.style.maxWidth = '500px';
     html = `<img src="${item.content}" style="width:100%; max-height:82vh; object-fit:contain; border-radius:12px;">`;
-  } else if(item.type === 'video'){
+  }
+  else if(item.type === 'audio'){
+
+  const bgMusic = document.getElementById('bg-music');
+  const btn = document.getElementById('music-btn');
+  const player = document.getElementById('music-player');
+
+  if(bgMusic && !bgMusic.paused){
+    bgMusic.pause();
+
+    if(btn) btn.innerHTML = '▶️ Tocar Música';
+    if(player) player.classList.remove('playing');
+  }
+
+  html = `
+    <h3>${item.title}</h3>
+
+    <audio
+      autoplay
+      controls
+      style="width:100%; margin-top:20px;">
+      <source src="${item.content}" type="audio/ogg">
+    </audio>
+  `;
+}
+  else if(item.type === 'video'){
     const bgMusic = document.getElementById('bg-music');
     const btn = document.getElementById('music-btn');
     const player = document.getElementById('music-player');
